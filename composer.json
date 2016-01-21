@@ -1,0 +1,26 @@
+{
+    "name": "fiorello/affinity-integration",
+    "description": "Affinity Integration system. Consumes Affinity APIs to perform basic functions",
+    "keywords": ["laravel", "affinity", "aurora", "akj", "integration"],
+    "homepage": "https://github.com/AlexFiorello/AffinityIntegration",
+    "authors": [
+        {
+            "name": "Alex Fiorello",
+            "email": "alex.fiorello@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Fiorello\\AffinityIntegration\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
