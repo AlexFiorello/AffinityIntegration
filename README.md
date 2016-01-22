@@ -78,6 +78,7 @@ if($siteResponse->errorCode > 0) {
   var_dump($detailsResponse->result);
  }
  
+ Affinity::logout();
  
 ```
 
