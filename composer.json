@@ -3,6 +3,7 @@
     "description": "Affinity Integration system. Consumes Affinity APIs to perform basic functions",
     "keywords": ["laravel", "affinity", "aurora", "akj", "integration"],
     "homepage": "https://github.com/AlexFiorello/AffinityIntegration",
+    "license": "LPGL",
     "authors": [
         {
             "name": "Alex Fiorello",
