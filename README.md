@@ -17,6 +17,23 @@ Require this package in your `composer.json` and update composer. This will down
 ```php
 'fiorello\AffinityIntegration\AffinityIntegrationServiceProvider',
 ```
+
+You will need to publish the configuration, and amend it.
+```php
+"php artisan config:publish fiorello/affinity-integration"
+```
+
+Then go to:  `app/config/packages/fiorello/affinity-integration/config.php`  and enter your own Affinity API connection details.
+
+```php
+return array(
+    'affinityWSDL'      =>  "https://api.affinity.akjl.co.uk/[APIuser]/WSDL/AffinityAPIService.WSDL",
+    'affinityUserName'  =>  "[AffinityUsername]",
+    'affinityPassword'  =>  "[AffinityPassword]",
+    'affinityAppName'   =>  "[AppName]",
+    'affinityAppRef'    =>  "[LaravelAPI]"
+);
+```
 ---
 
 # Authors and Contributors
