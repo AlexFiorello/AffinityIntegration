@@ -35,6 +35,53 @@ return array(
 );
 ```
 ---
+# Usage
+Before you can make any calls to Affinity, you must login.  This process gets a unique Token which will be used for all subsequent calls automatically.  You must remember to log out when you have finished.
+
+```php
+Affinity::login();
+//Do Stuff
+Affinity::logout();
+```
+
+There are two types of result returned from a function call.  Where a function call was succesful the following properties will be returned (`errorCode` will be equal to `0`):
+```php
+errorCode
+result
+properties
+```
+Where a function call fails the following is returned:
+```php
+errorCode
+errorMessage
+```
+
+The `result` property will either be a string, integer or an object.  Where `result` is an object the `properties` property will be returned as an array with the available properties for the `result` object. You can use this if you do not know what data the object contains.
+
+#An Example
+```php
+Affinity::login()
+$siteResponse = Affinity::getSiteId("HT123456");
+if($siteResponse->errorCode > 0) {
+ //An error has occured, display the message
+ echo $siteResponse->errorMessage;
+} else {
+ //All processed fine, lets handle the data.  
+ //I know that getSiteId returns an Integer.
+ //So use this to get Site Details
+ $detailsResponse = Affinity::getSite($siteResponse->result);
+ if($detailsResponse->errorCode > 0) {
+  //An error occured so display the message
+  echo $detailsResponse->errorMessage;
+ } else {
+  //getSite returns an object of site details
+  var_dump($detailsResponse->result);
+ }
+ 
+ 
+```
+
+
 
 # Authors and Contributors
 Created in Jan 2016 by Alex Fiorello (@AlexFiorello)
