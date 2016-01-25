@@ -56,7 +56,7 @@ errorCode
 errorMessage
 ```
 
-The `result` property will either be a string, integer or an object.  Where `result` is an object the `properties` property will be returned as an array with the available properties for the `result` object. You can use this if you do not know what data the object contains.
+The `result` property will either be a string, integer or a JSON object.  Where `result` is a JSON object the `properties` property will be returned as an array with the available properties for the `result` object. You can use this if you do not know what data the object contains.
 
 #An Example
 ```php
@@ -81,8 +81,34 @@ if($siteResponse->errorCode > 0) {
  Affinity::logout();
  
 ```
+The above `$detailsResponse->result` would produce the following:
 
+```json
+{
+ "SiteName":"Claire Test",
+ "SiteRef":"NN12345678",
+ "CompanyVATNumber":{},
+ "CompanyRegNumber":{},
+ "DealerID":"10",
+ "CompanyID":"654321",
+ "CompanyName":"Claire Test",
+ "CompanyWebAddress":{}
+}
+```
+The `$detailsResponse->properties` would contain:
 
+```php
+(
+ [0] => SiteName 
+ [1] => SiteRef 
+ [2] => CompanyVATNumber 
+ [3] => CompanyRegNumber 
+ [4] => DealerID 
+ [5] => CompanyID 
+ [6] => CompanyName 
+ [7] => CompanyWebAddress
+)
+```
 
 # Authors and Contributors
 Created in Jan 2016 by Alex Fiorello (@AlexFiorello)
