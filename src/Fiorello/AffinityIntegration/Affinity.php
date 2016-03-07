@@ -32,18 +32,56 @@ class Affinity
         self::$SOAPClient = new SoapClient(self::$WSDL_uri, array("trace" => false, "exceptions" => true));
     }
 
-    public static function makeCall($function, $data)
+    public static function makeCall($function, $data = [])
     {
-
         $data['IdentityToken'] = self::$token;
+        $data['identityToken'] = self::$token;
+
+        var_dump($data);
+
+        echo self::$token;
+
         $response = self::$SOAPClient->$function($data);
+
+        var_dump($response);
+
+        if($function == "XMLGetProductByID")
+        {
+
+            Affinity::logout();
+            exit;
+        }
 
         $functionRet = $function . "Result";
 
         if($response)
         {
             if ($response->$functionRet->ResponseCode > 0) {
-                var_dump($response);
+                $response->errorCode = $response->$functionRet->ResponseCode;
+                $response->errorMessage = $response->$functionRet->ResponseMessage ;
+                unset($response->$functionRet);
+            } else {
+                $response->errorCode = 0;
+                $response->errorMessage = null;
+                unset($response->$functionRet);
+
+                $responseArr = array_slice(get_object_vars($response),0,1);
+
+                $keys = array_keys($responseArr);
+
+                if(gettype($responseArr[$keys[0]]) == "object") {
+
+                    $object = $responseArr[$keys[0]];
+                    $resultKey = ucwords($keys[0]);
+
+                    $response->result = json_encode(simplexml_load_string($object->any)->NewDataSet->$resultKey);
+                    //$response->properties = get_object_vars($response->result);
+                    $response->properties = array_keys(get_object_vars(simplexml_load_string($object->any)->NewDataSet->$resultKey));
+                } else {
+                    $response->result = $responseArr[$keys[0]];
+                }
+
+                unset($response->$keys[0]);
             }
         }
 
@@ -71,6 +109,7 @@ class Affinity
         ];
 
         $loginResult = self::$SOAPClient->GetIdentityToken($soapData);
+
         if ($loginResult) {
             if ($loginResult->GetIdentityTokenResult->ResponseCode == 0) {
                 self::$token = $loginResult->GetIdentityTokenResult->IdentityToken;
@@ -79,6 +118,9 @@ class Affinity
                 var_dump($loginResult);
             }
         }
+
+        var_dump($loginResult);
+        echo self::$token;
         return $loginResult;
     }
 
@@ -86,7 +128,10 @@ class Affinity
      * Logout method
      */
     public static function logout() {
-        return self::$SOAPClient->IdentityTokenLogout(array('IdentityToken' => self::$token));
+        if(!empty(self::$token )) {
+            return self::$SOAPClient->IdentityTokenLogout(array('IdentityToken' => self::$token));
+        }
+        return false;
     }
 
     /*
@@ -104,13 +149,44 @@ class Affinity
             '$subCategory' => $subCategory
         ];
 
-        return self::makeCall('CreateNewTicketOnSIteByID',$data)->ticketID;
+        return self::makeCall('CreateNewTicketOnSiteByID',$data)->ticketID;
     }
 
     /*
      * Get Site ID
      */
     public static function getSiteId($accountNo) {
-        return self::makeCall('GetSiteIDByRef',['siteRef' => $accountNo])->siteID;
+        return self::makeCall('GetSiteIDByRef',['siteRef' => $accountNo]);
+    }
+
+    /*
+     * Get Site Details using Site ID
+     */
+    public static function getSite($siteID) {
+        return self::makeCall('GetSiteByID', ['siteID' => $siteID]);
+    }
+
+
+    public static function getSiteCLIs($subSiteID)
+    {
+        return self::makeCall('GetSiteUserCLIsByID', ['subSiteID' => $subSiteID]);
+    }
+
+    public static function addCLIProduct($productType, $siteID, $cli)
+    {
+
+        $xml = null;
+        $xml =  "<![CDATA[".$xml."]]>";
+        return self::makeCall('XMLAddProduct', ['productType' => $productType, 'productXML' => $xml]);
+    }
+
+//    public static function getProduct($productID, $productType)
+//    {
+//        return self::makeCall('XMLGetProductByID',['productInstanceID'=>$productID, 'productType'=>$productType]);
+//    }
+
+    public static function getProduct($productID)
+    {
+        return self::makeCall('GetProductItemByID',['productItemID'=>$productID]);
     }
 }

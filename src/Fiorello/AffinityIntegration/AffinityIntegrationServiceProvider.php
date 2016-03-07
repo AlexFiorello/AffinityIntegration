@@ -42,7 +42,6 @@ class AffinityIntegrationServiceProvider extends ServiceProvider {
 		{
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();
 			$loader->alias('Affinity', 'Fiorello\AffinityIntegration\Facades\Affinity');
-			$loader->alias('SoapClient', 'SoapClient::class');
 		});
 
 	}
